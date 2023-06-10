@@ -92,13 +92,13 @@ const Stats = () => {
   }, [users]);
 
   useEffect(() => {
-    const arrCount = [...labs.filter((item: IMarks) => item.bonusProject)];
+    const arrCount = labs.filter((item: IMarks) => item.bonusProject);
     const totalCount = arrCount.reduce(
-      (accum: number, total: IMarks) =>
-        (accum + total.labMark) / arrCount.length,
+      (accum: number, total: IMarks) => accum + total.labMark,
       0
     );
-    setGeneralCount(Math.round(totalCount));
+    const averageCount = totalCount / arrCount.length || 0;
+    setGeneralCount(Math.round(averageCount));
   }, [labs]);
 
   const getBonusMark = (project: IBonusProject, labs: IMarks[]) => {
