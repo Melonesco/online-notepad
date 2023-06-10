@@ -1,17 +1,18 @@
 import React from "react";
-import { IBonusProject, ILab, IMarks, ISubject } from "../../utils/types";
+import {
+  GetBonusMarkFunction,
+  IMarks,
+  IOpenModalFunction,
+  ISubject,
+} from "../../utils/types";
 import * as S from "./styles";
 import { Table } from "./styles";
 
 interface ITableExam {
   data: any;
   labs: IMarks[];
-  getBonusMark: (project: any, labs: IMarks[]) => any;
-  handleOpenModal: (
-    currentLab: ILab | null,
-    currentProject: IBonusProject | null,
-    obj: ISubject
-  ) => void;
+  getBonusMark: GetBonusMarkFunction;
+  handleOpenModal: IOpenModalFunction;
 }
 
 const TableExam = ({
@@ -41,11 +42,16 @@ const TableExam = ({
 
                 const percentMark = countExamMarks.reduce(
                   (accum: number, total: IMarks) =>
-                    accum + total.labMark * obj.credits,
+                    accum + total.labMark * obj.ExamCredits,
                   0
                 );
 
                 const Exam = getBonusMark(obj.Exam, labs);
+
+                const CourseWork = getBonusMark(obj.CourseWork, labs);
+                const backgroundColor = CourseWork.status
+                  ? CourseWork.backgroundColor
+                  : undefined;
 
                 return (
                   <S.Tr key={obj._id}>
@@ -63,9 +69,9 @@ const TableExam = ({
                         </S.ButtonOpen>
                       </S.Td>
                     ) : (
-                      <S.Td backgroundColor={Exam.status}>-</S.Td>
+                      <S.Td backgroundColor={backgroundColor}>-</S.Td>
                     )}
-                    <S.Td>{obj.credits}</S.Td>
+                    <S.Td>{obj.ExamCredits}</S.Td>
                     <S.Td>{percentMark}</S.Td>
                   </S.Tr>
                 );

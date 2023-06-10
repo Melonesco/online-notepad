@@ -10,6 +10,23 @@ export const Page = styled.div`
   padding: 80px 100px;
 `;
 
+export const ButtonLogOut = styled.button`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+    background-color: darkred;
+  }
+`;
+
 export const Container = styled.div`
   width: 100%;
   height: 100%;

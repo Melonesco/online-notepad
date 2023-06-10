@@ -7,14 +7,14 @@ import Loader from "../../components/loader";
 import SubtractIcon from "../../assets/images/icons8-subtract-30.png";
 import PlusIcon from "../../assets/images/icons8-plus-math-30.png";
 import { subjectsStorage } from "../../Storage/Storage";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ISubject, ISubjectStorage } from "../../utils/types";
 import { IGroupPayload } from "../../redux/group/types";
-import { token } from "../../utils/token";
 import * as S from "./styles";
 
 const Create = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [count, setCount] = useState<number>(0);
   const [nameGroup, setNameGroup] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,15 +43,20 @@ const Create = () => {
     }
   };
 
-  if (
-    token !==
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDgzNDI3MDk3MjU5NmE4ZGY2NzdjY2QiLCJpYXQiOjE2ODYzMjQ2MDAsImV4cCI6MTY5NjY5MjYwMH0.9kZfWLxNWBnQ1yWXy1xOuL1q8CG6t8xIAW1c9JkT5vk"
-  ) {
+  const onClickLogout = () => {
+    if (window.confirm("Ви впевнені, що хочете вийти з системи?")) {
+      navigate("/login");
+      window.localStorage.removeItem("adminPassword");
+    }
+  };
+
+  if (!window.localStorage.getItem("adminPassword")) {
     return <Navigate to="/" />;
   }
 
   return (
     <S.Page>
+      <S.ButtonLogOut onClick={onClickLogout}>Вийти з адміна</S.ButtonLogOut>
       <S.Container>
         <S.Title>Панель Адміна</S.Title>
         <S.Block>
@@ -59,7 +64,9 @@ const Create = () => {
             type="text"
             maxLength={30}
             value={nameGroup}
-            onChange={(e) => setNameGroup(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNameGroup(e.target.value)
+            }
             placeholder="Назва групи"
           />
           <S.ButtonSubmit onClick={onSubmit} type="submit">

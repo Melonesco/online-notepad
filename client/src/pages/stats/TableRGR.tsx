@@ -1,12 +1,6 @@
 import React from "react";
 import * as S from "./styles";
-import {
-  IBonusProject,
-  ILab,
-  IMarks,
-  ISubject,
-  ITableProps,
-} from "../../utils/types";
+import { IMarks, ITableProps } from "../../utils/types";
 
 interface ITablePresentation extends ITableProps {
   getBonusMark: (project: any, labs: IMarks[]) => any;

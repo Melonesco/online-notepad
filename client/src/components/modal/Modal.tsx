@@ -16,21 +16,21 @@ interface IModal {
   setData: any;
 }
 
-const Modal = ({
+const Modal: React.FC<IModal> = ({
   handleModalOverlayClick,
   handleModalContentClick,
   data,
   setData,
-}: IModal) => {
+}) => {
   const subjects = data?.subjects ?? [];
   const users = data?.users ?? [];
   const dispatch: ThunkDispatch<RootState, null, AnyAction> = useDispatch();
 
-  console.log(data);
-
   const handleRemoveGroup = (data: any) => {
     setData(null);
-    dispatch(fetchDeleteGroup(data));
+    if (data) {
+      dispatch(fetchDeleteGroup(data));
+    }
   };
 
   const handleRemoveUser = (id: string) => {

@@ -2,22 +2,27 @@ import React, { useState } from "react";
 import Groups from "../../components/groups";
 import Register from "../../components/register";
 import SectionInformation from "../../components/section-information";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import * as S from "./styles";
-import { token } from "../../utils/token";
 
 const AddStudents = () => {
   const [getNameGroup, setGetGroup] = useState<string>("");
+  const navigate = useNavigate();
 
-  if (
-    token !==
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDgzNDI3MDk3MjU5NmE4ZGY2NzdjY2QiLCJpYXQiOjE2ODYzMjQ2MDAsImV4cCI6MTY5NjY5MjYwMH0.9kZfWLxNWBnQ1yWXy1xOuL1q8CG6t8xIAW1c9JkT5vk"
-  ) {
+  const onClickLogout = () => {
+    if (window.confirm("Ви впевнені, що хочете вийти з системи?")) {
+      navigate("/login");
+      window.localStorage.removeItem("adminPassword");
+    }
+  };
+
+  if (!window.localStorage.getItem("adminPassword")) {
     return <Navigate to="/" />;
   }
 
   return (
     <S.Page>
+      <S.ButtonLogOut onClick={onClickLogout}>Вийти з адміна</S.ButtonLogOut>
       <S.Container>
         <S.Title>Меню Адміна</S.Title>
         <S.Blocks>

@@ -15,7 +15,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    avatarUrl: String,
     group: { type: Schema.Types.ObjectId, ref: "Group" },
   },
   {

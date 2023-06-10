@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IAuthData } from "./types";
-import { fetchAuth, fetchAuthMe, fetchRegister } from "./asyncActions";
+import { fetchAuth, fetchAuthMe } from "./asyncActions";
 
 const initialState: IAuthData = {
   data: null,
@@ -38,18 +38,6 @@ const authSlice = createSlice({
         state.status = "loaded";
       })
       .addCase(fetchAuthMe.rejected, (state) => {
-        state.data = null;
-        state.status = "loading";
-      })
-      .addCase(fetchRegister.pending, (state) => {
-        state.data = null;
-        state.status = "loading";
-      })
-      .addCase(fetchRegister.fulfilled, (state, action) => {
-        state.data = action.payload;
-        state.status = "loaded";
-      })
-      .addCase(fetchRegister.rejected, (state) => {
         state.data = null;
         state.status = "loading";
       });

@@ -110,7 +110,8 @@ const Subject = ({ index, subjects, setSubjects }: ISubject) => {
 
   const handleCreditsChange = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: string
   ) => {
     const credits = +event.target.value;
     let validatedCredits = 1;
@@ -123,7 +124,7 @@ const Subject = ({ index, subjects, setSubjects }: ISubject) => {
 
     newSubjects[index] = {
       ...newSubjects[index],
-      credits: validatedCredits,
+      [field]: validatedCredits,
     };
     setSubjects(newSubjects);
   };
@@ -219,20 +220,34 @@ const Subject = ({ index, subjects, setSubjects }: ISubject) => {
           </S.ButtonClick>
         </S.BonusTasks>
       </S.Block>
-      {subjects[index].Exam.status ? (
+      {subjects[index].CourseWork.status && (
         <S.Field>
-          <S.Info>Кількість кредитів</S.Info>
+          <S.Info>Кількість кредитів для курсової роботи</S.Info>
           <S.InputPoint
             min={0}
             max={100}
-            value={subjects[index].credits}
+            value={subjects[index].CourseWorkCredits}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              handleCreditsChange(index, event)
+              handleCreditsChange(index, event, "CourseWorkCredits")
             }
             type="number"
           />
         </S.Field>
-      ) : null}
+      )}
+      {subjects[index].Exam.status && (
+        <S.Field>
+          <S.Info>Кількість кредитів для екзамену</S.Info>
+          <S.InputPoint
+            min={0}
+            max={100}
+            value={subjects[index].ExamCredits}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleCreditsChange(index, event, "ExamCredits")
+            }
+            type="number"
+          />
+        </S.Field>
+      )}
     </S.Blocks>
   );
 };

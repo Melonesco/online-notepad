@@ -9,7 +9,7 @@ const TableLabs = ({ obj, labs, handleOpenModal }: ITableProps) => {
         const foundLab = labs.find((l: IMarks) => l.lab?._id === lab._id);
         const labMark = foundLab ? foundLab.labMark : lab.labMark;
         const labBackgroundColor = foundLab?.passed ? "#90EE90" : "#f2f2f2";
-        const labCursor = foundLab?.passed ? "pointer" : "default";
+        const labCursor = !foundLab?.passed ? "pointer" : "default";
         const labContent = foundLab?.passed ? labMark : "-";
         return (
           <S.Td

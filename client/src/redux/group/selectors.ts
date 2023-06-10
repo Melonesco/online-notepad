@@ -1,1 +1,3 @@
-export const groupsSelector = (state: any) => state.groups.items;
+import { RootState } from "../store";
+
+export const groupsSelector = (state: RootState) => state.groups.items;

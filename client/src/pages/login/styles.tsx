@@ -7,10 +7,66 @@ export const Login = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("1");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+`;
+
+export const ButtonAdminIcon = styled.img`
+  width: 40px;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
+export const ModalContent = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 80px;
+  width: 200px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  z-index: 1000;
+`;
+
+export const ModalImgClose = styled.img`
+  width: 16px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+`;
+
+export const ModalInput = styled.input`
+  height: 30px;
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 18px;
+  background-color: #ffffff;
+  width: 100%;
+`;
+export const ModalButton = styled.button`
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #000000;
+    background-color: #ffffff;
+  }
 `;
 
 export const Image = styled.img`

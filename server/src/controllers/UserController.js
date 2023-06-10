@@ -11,7 +11,6 @@ export const register = async (req, res) => {
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
-      avatarUser: req.body.avatarUser,
       nameGroup: req.body.nameGroup,
       subjects: req.body.subjects,
       passwordHash: hash,
@@ -151,7 +150,6 @@ export const getUserLabs = async (req, res) => {
 
 export const getGroupWithSubjectsAndLabs = async (req, res) => {
   const userId = req.userId;
-
   try {
     const userLabs = await UserSubjectLabModel.find({ user: userId })
       .populate("lab")

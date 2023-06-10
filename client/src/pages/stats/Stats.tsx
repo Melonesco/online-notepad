@@ -9,12 +9,12 @@ import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
 import { fetchUsers } from "../../redux/user/asyncActions";
 import TableExam from "./TableExam";
-import TablePresentation from "./TablePresentation";
-import TableRGR from "./TableRGR";
-import TableLabs from "./TableLabs";
 import TableCourseWork from "./TableCourseWork";
-import * as S from "./styles";
 import { selectIsAuth } from "../../redux/auth/selectors";
+import { fetchAuthMe } from "../../redux/auth/asyncActions";
+import * as S from "./styles";
+import TableHeader from "./TableHeader";
+import TableBody from "./TableBody";
 
 const Stats = () => {
   const isAuth = useSelector(selectIsAuth);
@@ -22,18 +22,20 @@ const Stats = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const userData = useSelector((state: any) => state.auth.data);
+  const userData = useSelector((state: RootState) => state.auth.data);
   const users = useSelector(usersSelector);
 
   const [labInfo, setLabInfo] = useState<object | null>(null);
   const [labScore, setLabScore] = useState(0);
   const [labs, setLabs] = useState<IMarks[]>([]);
+  const [generalCount, setGeneralCount] = useState(0);
 
   useEffect(() => {
+    dispatch(fetchAuthMe());
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  const data = users?.find((obj: ILab) => obj._id === userData?._id);
+  const data = users.find((obj: ILab) => obj._id === userData?._id);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,11 +70,9 @@ const Stats = () => {
     [userData]
   );
 
-  const handleCloseModal = useCallback(() => {
-    setShowModal(false);
-  }, []);
+  const handleCloseModal = useCallback(() => setShowModal(false), []);
 
-  const handleUpdate = () => {
+  const handleUpdate = useCallback(() => {
     const data = {
       ...labInfo,
       labMark: +labScore,
@@ -85,11 +85,21 @@ const Stats = () => {
       .catch((err) => console.error(err));
 
     window.location.reload();
-  };
+  }, [labInfo, labScore]);
 
   useEffect(() => {
     instance.get("/users/labs").then((res) => setLabs(res.data));
   }, [users]);
+
+  useEffect(() => {
+    const arrCount = [...labs.filter((item: IMarks) => item.bonusProject)];
+    const totalCount = arrCount.reduce(
+      (accum: number, total: IMarks) =>
+        (accum + total.labMark) / arrCount.length,
+      0
+    );
+    setGeneralCount(Math.round(totalCount));
+  }, [labs]);
 
   const getBonusMark = (project: IBonusProject, labs: IMarks[]) => {
     const foundBonusMark = labs.find(
@@ -100,7 +110,7 @@ const Stats = () => {
     const bonusMarkBackgroundColor = foundBonusMark?.passed
       ? "#90EE90"
       : "#f2f2f2";
-    const bonusMarkCursor = foundBonusMark?.passed ? "pointer" : "default";
+    const bonusMarkCursor = !foundBonusMark?.passed ? "pointer" : "default";
     const bonusMarkContent = foundBonusMark?.passed ? bonusMark : "-";
     return {
       backgroundColor: bonusMarkBackgroundColor,
@@ -119,74 +129,13 @@ const Stats = () => {
       <S.Container>
         <S.Title>Веб-застосунок</S.Title>
         <S.Table>
-          <thead>
-            <S.Tr>
-              <S.Th>Предмет / Викладач</S.Th>
-              {[...Array(10)].map((_, index: number) => (
-                <S.Th key={index}>Лаба {index + 1}</S.Th>
-              ))}
-              <S.Th>РГР</S.Th>
-              <S.Th>Презентація</S.Th>
-              <S.Th>Бал</S.Th>
-              <S.Th>Максимальний бал</S.Th>
-              <S.Th>Відсоток</S.Th>
-            </S.Tr>
-          </thead>
-          <tbody>
-            {data
-              ? data.group.subjects.map((obj: ISubject) => {
-                  const countLabMarks = labs
-                    ? labs
-                        .filter(
-                          (l: IMarks) =>
-                            l.bonusProject === obj.RGR._id ||
-                            l.bonusProject === obj.Presentation._id
-                        )
-                        .reduce((acc: number, l: IMarks) => acc + l.labMark, 0)
-                    : 0;
-
-                  const countBonusMarks = labs
-                    .filter((lab: IMarks) =>
-                      obj.countByLab
-                        .map((ob: ILab) => ob._id)
-                        .includes(lab.lab?._id)
-                    )
-                    .reduce((acc: number, l: IMarks) => acc + l.labMark, 0);
-
-                  const totalMarks = countBonusMarks + countLabMarks;
-
-                  const percentMarks = obj.max_score_subj
-                    ? ((totalMarks / obj.max_score_subj) * 100).toFixed(0)
-                    : 0;
-
-                  return (
-                    <S.Tr key={obj._id}>
-                      <S.Td>{obj.nameSubject}</S.Td>
-                      <TableLabs
-                        obj={obj}
-                        labs={labs}
-                        handleOpenModal={handleOpenModal}
-                      />
-                      <TableRGR
-                        obj={obj}
-                        getBonusMark={getBonusMark}
-                        labs={labs}
-                        handleOpenModal={handleOpenModal}
-                      />
-                      <TablePresentation
-                        obj={obj}
-                        getBonusMark={getBonusMark}
-                        labs={labs}
-                        handleOpenModal={handleOpenModal}
-                      />
-                      <S.Td>{totalMarks}</S.Td>
-                      <S.Td>{obj.max_score_subj}</S.Td>
-                      <S.Td>{percentMarks}%</S.Td>
-                    </S.Tr>
-                  );
-                })
-              : null}
-          </tbody>
+          <TableHeader />
+          <TableBody
+            data={data}
+            labs={labs}
+            handleOpenModal={handleOpenModal}
+            getBonusMark={getBonusMark}
+          />
         </S.Table>
         <TableCourseWork
           data={data}
@@ -209,6 +158,7 @@ const Stats = () => {
             handleCloseModal={handleCloseModal}
           />
         )}
+        <S.GeneralPoint>Загальний бал: {generalCount}</S.GeneralPoint>
       </S.Container>
     </S.Page>
   );

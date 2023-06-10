@@ -103,7 +103,8 @@ export const createGroup = async (req, res) => {
           CourseWork: item.CourseWork,
           Presentation: item.Presentation,
           Exam: item.Exam,
-          credits: item.credits,
+          ExamCredits: item.ExamCredits,
+          CourseWorkCredits: item.CourseWorkCredits,
           score_subj: item.score_subj,
           max_score_subj: item.max_score_subj,
         });

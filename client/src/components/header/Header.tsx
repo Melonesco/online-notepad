@@ -2,9 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import LogoutIcon from "../../assets/images/logout.png";
-import * as S from "./styles";
 import { logout } from "../../redux/auth/slice";
 import { RootState } from "../../redux/store";
+import * as S from "./styles";
 
 const Header = () => {
   const userData = useSelector((state: RootState) => state.auth.data);

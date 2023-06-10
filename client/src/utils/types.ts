@@ -22,7 +22,8 @@ export interface ISubjectStorage {
   CourseWork: IBonusProject;
   Presentation: IBonusProject;
   Exam: IBonusProject;
-  credits: number;
+  ExamCredits: number;
+  CourseWorkCredits: number;
   score_subj: number;
   max_score_subj: number;
 }
@@ -43,7 +44,8 @@ export interface ISubject {
   Exam: IBonusProject;
   _id?: string;
   nameSubject: string;
-  credits: number;
+  ExamCredits: number;
+  CourseWorkCredits: number;
   countByLab: any;
   score_subj: number;
   max_score_subj: number;
@@ -108,4 +110,22 @@ export interface ITableProps {
     currentProject: IBonusProject | null,
     obj: ISubject
   ) => void;
+}
+
+export type GetBonusMarkFunction = (
+  project: IBonusProject,
+  labs: IMarks[]
+) => {
+  backgroundColor: string;
+  cursor: string;
+  content: string | number;
+  status: string | boolean;
+};
+
+export interface IOpenModalFunction {
+  (
+    currentLab: ILab | null,
+    currentProject: IBonusProject | null,
+    obj: ISubject
+  ): void;
 }

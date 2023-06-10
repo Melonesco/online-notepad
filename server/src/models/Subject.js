@@ -36,7 +36,8 @@ const subjectSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    credits: Number,
+    ExamCredits: Number,
+    CourseWorkCredits: Number,
     max_score_subj: Number,
   },
   {

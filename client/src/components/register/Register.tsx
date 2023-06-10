@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { FormData, IGroup, IRegisterForm } from "../../utils/types";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { RootState } from "../../redux/store";
-import { fetchRegister } from "../../redux/auth/asyncActions";
+import { fetchRegisterUser } from "../../redux/user/asyncActions";
 
 interface IRegister {
   getNameGroup: string;
@@ -14,7 +14,7 @@ interface IRegister {
 
 const Register = ({ getNameGroup, setGetGroup }: IRegister) => {
   const dispatch: ThunkDispatch<RootState, null, AnyAction> = useDispatch();
-  const groups = useSelector((state: any) => state.groups.items);
+  const groups = useSelector((state: RootState) => state.groups.items);
 
   const {
     register,
@@ -49,7 +49,7 @@ const Register = ({ getNameGroup, setGetGroup }: IRegister) => {
     };
 
     setGetGroup("");
-    dispatch(fetchRegister(data));
+    dispatch(fetchRegisterUser(data));
     reset();
     window.location.reload();
   };

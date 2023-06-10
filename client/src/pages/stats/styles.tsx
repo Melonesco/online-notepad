@@ -156,3 +156,13 @@ export const ButtonApply = styled.button`
     background-color: darkred;
   }
 `;
+
+export const GeneralPoint = styled.div`
+  background-color: yellowgreen;
+  margin: 60px auto;
+  padding: 40px 20px;
+  width: 200px;
+  text-align: center;
+  border-radius: 4px;
+  font-weight: bold;
+`;

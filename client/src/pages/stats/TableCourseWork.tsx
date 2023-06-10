@@ -1,17 +1,18 @@
 import React from "react";
-import { IBonusProject, ILab, IMarks, ISubject } from "../../utils/types";
+import {
+  GetBonusMarkFunction,
+  IMarks,
+  IOpenModalFunction,
+  ISubject,
+} from "../../utils/types";
 import * as S from "./styles";
 import { Table } from "./styles";
 
 interface ITableCourseWork {
   data: any;
   labs: IMarks[];
-  getBonusMark: (project: any, labs: IMarks[]) => any;
-  handleOpenModal: (
-    currentLab: ILab | null,
-    currentProject: IBonusProject | null,
-    obj: ISubject
-  ) => void;
+  getBonusMark: GetBonusMarkFunction;
+  handleOpenModal: IOpenModalFunction;
 }
 
 const TableCourseWork = ({
@@ -26,7 +27,8 @@ const TableCourseWork = ({
         <S.Tr>
           <S.Th>Курсова робота</S.Th>
           <S.Th>Бал</S.Th>
-          <S.Th>Максимальний бал</S.Th>
+          <S.Th>Кредити</S.Th>
+          <S.Th>Кінцевий бал</S.Th>
         </S.Tr>
       </thead>
       <tbody>
@@ -36,7 +38,20 @@ const TableCourseWork = ({
                 (obj: ISubject) => obj.CourseWork && obj.CourseWork.status
               )
               .map((obj: ISubject) => {
+                const countCourseWorkMarks = labs.filter(
+                  (l: IMarks) => l?.bonusProject === obj?.CourseWork._id
+                );
+
+                const percentMark = countCourseWorkMarks.reduce(
+                  (accum: number, total: IMarks) =>
+                    accum + total.labMark * obj.CourseWorkCredits,
+                  0
+                );
+
                 const CourseWork = getBonusMark(obj.CourseWork, labs);
+                const backgroundColor = CourseWork.status
+                  ? CourseWork.backgroundColor
+                  : undefined;
 
                 return (
                   <S.Tr key={obj._id}>
@@ -46,7 +61,7 @@ const TableCourseWork = ({
                         onClick={() =>
                           handleOpenModal(null, obj.CourseWork, obj)
                         }
-                        backgroundColor={CourseWork.backgroundColor}
+                        backgroundColor={backgroundColor}
                       >
                         <S.ButtonOpen
                           disabled={CourseWork.content > 0}
@@ -56,9 +71,10 @@ const TableCourseWork = ({
                         </S.ButtonOpen>
                       </S.Td>
                     ) : (
-                      <S.Td backgroundColor={CourseWork.status}>-</S.Td>
+                      <S.Td backgroundColor={backgroundColor}>-</S.Td>
                     )}
-                    <S.Td>{obj.CourseWork.maxMark}</S.Td>
+                    <S.Td>{obj.CourseWorkCredits}</S.Td>
+                    <S.Td>{percentMark}</S.Td>
                   </S.Tr>
                 );
               })
