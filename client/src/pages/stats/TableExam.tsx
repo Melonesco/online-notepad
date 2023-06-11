@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   GetBonusMarkFunction,
   IMarks,
@@ -13,6 +13,8 @@ interface ITableExam {
   labs: IMarks[];
   getBonusMark: GetBonusMarkFunction;
   handleOpenModal: IOpenModalFunction;
+  setTotalExamCount: any;
+  totalExamCount: any;
 }
 
 const TableExam = ({
@@ -20,7 +22,30 @@ const TableExam = ({
   labs,
   getBonusMark,
   handleOpenModal,
+  setTotalExamCount,
+  totalExamCount,
 }: ITableExam) => {
+  useEffect(() => {
+    if (data) {
+      const updatedTotalExamCount = data.group.subjects
+        .filter((obj: ISubject) => obj.Exam && obj.Exam.status)
+        .map((obj: ISubject) => {
+          const countExamMarks = labs.filter(
+            (l: IMarks) => l?.bonusProject === obj?.Exam._id
+          );
+
+          const percentMark = countExamMarks.reduce(
+            (accum: number, total: IMarks) =>
+              accum + total.labMark * obj.ExamCredits,
+            0
+          );
+
+          return percentMark;
+        });
+
+      setTotalExamCount(updatedTotalExamCount);
+    }
+  }, [data, labs]);
   return (
     <Table>
       <thead>
@@ -35,22 +60,10 @@ const TableExam = ({
         {data
           ? data.group.subjects
               .filter((obj: ISubject) => obj.Exam && obj.Exam.status)
-              .map((obj: ISubject) => {
-                const countExamMarks = labs.filter(
-                  (l: IMarks) => l?.bonusProject === obj?.Exam._id
-                );
-
-                const percentMark = countExamMarks.reduce(
-                  (accum: number, total: IMarks) =>
-                    accum + total.labMark * obj.ExamCredits,
-                  0
-                );
-
+              .map((obj: ISubject, index: number) => {
                 const Exam = getBonusMark(obj.Exam, labs);
-
-                const CourseWork = getBonusMark(obj.CourseWork, labs);
-                const backgroundColor = CourseWork.status
-                  ? CourseWork.backgroundColor
+                const backgroundColor = Exam.status
+                  ? Exam.backgroundColor
                   : undefined;
 
                 return (
@@ -59,7 +72,7 @@ const TableExam = ({
                     {obj.Exam?.status ? (
                       <S.Td
                         onClick={() => handleOpenModal(null, obj.Exam, obj)}
-                        backgroundColor={Exam.backgroundColor}
+                        backgroundColor={backgroundColor}
                       >
                         <S.ButtonOpen
                           disabled={Exam.content > 0}
@@ -72,7 +85,7 @@ const TableExam = ({
                       <S.Td backgroundColor={backgroundColor}>-</S.Td>
                     )}
                     <S.Td>{obj.ExamCredits}</S.Td>
-                    <S.Td>{percentMark}</S.Td>
+                    <S.Td>{totalExamCount[index] || "-"}</S.Td>
                   </S.Tr>
                 );
               })

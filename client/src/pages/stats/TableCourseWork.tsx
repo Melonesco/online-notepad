@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   GetBonusMarkFunction,
   IMarks,
@@ -13,6 +13,8 @@ interface ITableCourseWork {
   labs: IMarks[];
   getBonusMark: GetBonusMarkFunction;
   handleOpenModal: IOpenModalFunction;
+  setTotalCoursesWorkCount: any;
+  totalCoursesWorkCount: any;
 }
 
 const TableCourseWork = ({
@@ -20,7 +22,31 @@ const TableCourseWork = ({
   labs,
   getBonusMark,
   handleOpenModal,
+  setTotalCoursesWorkCount,
+  totalCoursesWorkCount,
 }: ITableCourseWork) => {
+  useEffect(() => {
+    if (data) {
+      const updatedTotalCoursesWorkCount = data.group.subjects
+        .filter((obj: ISubject) => obj.CourseWork && obj.CourseWork.status)
+        .map((obj: ISubject) => {
+          const countCourseWorkMarks = labs.filter(
+            (l: IMarks) => l?.bonusProject === obj?.CourseWork._id
+          );
+
+          const percentMark = countCourseWorkMarks.reduce(
+            (accum: number, total: IMarks) =>
+              accum + total.labMark * obj.CourseWorkCredits,
+            0
+          );
+
+          return percentMark;
+        });
+
+      setTotalCoursesWorkCount(updatedTotalCoursesWorkCount);
+    }
+  }, [data, labs]);
+
   return (
     <Table>
       <thead>
@@ -37,17 +63,7 @@ const TableCourseWork = ({
               .filter(
                 (obj: ISubject) => obj.CourseWork && obj.CourseWork.status
               )
-              .map((obj: ISubject) => {
-                const countCourseWorkMarks = labs.filter(
-                  (l: IMarks) => l?.bonusProject === obj?.CourseWork._id
-                );
-
-                const percentMark = countCourseWorkMarks.reduce(
-                  (accum: number, total: IMarks) =>
-                    accum + total.labMark * obj.CourseWorkCredits,
-                  0
-                );
-
+              .map((obj: ISubject, index: number) => {
                 const CourseWork = getBonusMark(obj.CourseWork, labs);
                 const backgroundColor = CourseWork.status
                   ? CourseWork.backgroundColor
@@ -74,7 +90,7 @@ const TableCourseWork = ({
                       <S.Td backgroundColor={backgroundColor}>-</S.Td>
                     )}
                     <S.Td>{obj.CourseWorkCredits}</S.Td>
-                    <S.Td>{percentMark}</S.Td>
+                    <S.Td>{totalCoursesWorkCount[index] || "-"}</S.Td>
                   </S.Tr>
                 );
               })

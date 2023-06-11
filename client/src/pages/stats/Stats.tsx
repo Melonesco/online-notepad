@@ -91,14 +91,38 @@ const Stats = () => {
     instance.get("/users/labs").then((res) => setLabs(res.data));
   }, [users]);
 
+  //console.log("1", totalExamCredits);
+  //console.log("2", totalCoursesWorkCredits);
+
+  // const [totalCoursesWorkCount, setTotalCoursesWorkCount] = useState([]);
+
+  const [totalCoursesWorkCount, setTotalCoursesWorkCount] = useState<number[]>(
+    []
+  );
+  const [totalExamCount, setTotalExamCount] = useState<number[]>([]);
+
   useEffect(() => {
-    const arrCount = labs.filter((item: IMarks) => item.bonusProject);
-    const totalCount = arrCount.reduce(
-      (accum: number, total: IMarks) => accum + total.labMark,
+    const totalCounts = [...totalCoursesWorkCount, ...totalExamCount].reduce(
+      (accum: number, total: number) => accum + total,
       0
     );
-    const averageCount = totalCount / arrCount.length || 0;
-    setGeneralCount(Math.round(averageCount));
+
+    const totalExamCredits = data?.group.subjects
+      .map((credit: ISubject) =>
+        credit.ExamCredits > 0 ? credit.ExamCredits : null
+      )
+      .reduce((accum: number, total: number) => accum + total, 0);
+
+    const totalCoursesWorkCredits = data?.group.subjects
+      .map((credit: ISubject) =>
+        credit.CourseWorkCredits > 0 ? credit.CourseWorkCredits : null
+      )
+      .reduce((accum: number, total: number) => accum + total, 0);
+
+    const averageCount =
+      totalCounts / (totalExamCredits + totalCoursesWorkCredits) || 0;
+
+    setGeneralCount(parseFloat(averageCount.toFixed(2)));
   }, [labs]);
 
   const getBonusMark = (project: IBonusProject, labs: IMarks[]) => {
@@ -142,12 +166,16 @@ const Stats = () => {
           labs={labs}
           getBonusMark={getBonusMark}
           handleOpenModal={handleOpenModal}
+          setTotalCoursesWorkCount={setTotalCoursesWorkCount}
+          totalCoursesWorkCount={totalCoursesWorkCount}
         />
         <TableExam
           data={data}
           labs={labs}
           getBonusMark={getBonusMark}
           handleOpenModal={handleOpenModal}
+          setTotalExamCount={setTotalExamCount}
+          totalExamCount={totalExamCount}
         />
         {showModal && (
           <Modal
