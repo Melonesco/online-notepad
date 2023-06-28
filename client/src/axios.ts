@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 const instance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://online-notepad-ten.vercel.app",
 });
 
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import * as S from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -49,10 +49,11 @@ const Register = ({ getNameGroup, setGetGroup }: IRegister) => {
     };
 
     setGetGroup("");
-    dispatch(fetchRegisterUser(data));
+    dispatch(fetchRegisterUser(data))
     reset();
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 1000)
   };
+
 
   return (
     <S.Container>
